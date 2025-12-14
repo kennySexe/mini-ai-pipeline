@@ -1,277 +1,129 @@
-\documentclass[11pt, a4paper]{article}  % Set default font and page size
-
-
-% Load packages and configure them via options
-\usepackage[utf8]{inputenc}
-\usepackage[left=22mm, right=22mm, top=20mm, bottom=20mm, headheight=40pt, headsep=10pt]{geometry}  % Set margin of page
-\usepackage[parfill]{parskip}  % Set spacing between paragraphs
-\usepackage{amsmath}  % For the equation environment
-\usepackage{graphicx}  % Required for inserting images
-\usepackage[dvipsnames]{xcolor}  % Access color codes
-\usepackage[colorlinks=true]{hyperref}  % Enable hyperlink
-\usepackage{cleveref}  % Enable easy references to sections, figures, and tables
-\usepackage{minted}  % Enable code formatting in LaTeX
-\usepackage{changepage}  % Required for \adjustwidth
-\usepackage{caption}
-\usepackage{enumitem}  % Requried for changing configurations for list
-\usepackage{lmodern}  % For \texttt font style
-\usepackage{booktabs}  % For table formatting
-\usepackage{multirow}  % Required for \multirow in tables
-\usepackage{emoji}  % Required for Hugging Face emoji
-\usepackage[numbers, sort&compress]{natbib}  % For citations and references
-\bibliographystyle{unsrtnat}
-\usepackage[utf8]{inputenc}
-
-% Define macros, including color codes and macros
-\definecolor{YonseiBlue}{HTML}{183772}
-
-% TODO: Replace "CAS2105 Homework 6: Mini AI Pipeline Project \emoji{hugging-face}" with your report title
-\title{CAS2105 Homework 6: Mini AI Pipeline Project \emoji{hugging-face}}  % Title
-
-
-% TODO: Replace "Your Name (Your Student ID)" with your name and student ID
-\author{PIAO YONGLIN (2021147515)}
-
-
-% Redefine title style
-\makeatletter
-  \def\@maketitle{%
-  \newpage
-  \null
-  \vskip 2em%
-  \begin{flushleft}%
-  {\color{YonseiBlue}\rule{\textwidth}{2pt}}
-  \vskip 5pt%
-  \let \footnote \thanks
-    {\Large \bf \@title \par}%
-    \vskip 1.5em%
-    {\normalsize \bf \lineskip .5em% 
-        \@author
-        \vskip 2pt%
-        \par}
-    {\color{YonseiBlue}\rule{\textwidth}{2pt}}
-    \vskip 1.5em
-  \end{flushleft}%
-  }
-\makeatother
-
-
-
-\begin{document}
-\maketitle
-
-
-% TODO: Replace the following sections with your own report!
-
-
-\section{Introduction}
-\label{sec:introduction}
-
-% --- TODO: Students fill this in ---
-% Describe your chosen task and why it is interesting.
-% Keep the explanation clear enough for a classmate to understand.
-
-This project provides a gentle introduction to designing simple \textbf{AI pipelines}. Rather than training large models or reading extensive research literature, you will:
-
-\begin{itemize}
-    \item Choose a small, concrete problem solvable with an AI pipeline (e.g., text classification, retrieval, simple QA, image classification).
-    \item Choose or collect a small dataset (e.g., from \texttt{datasets}).
-    \item Implement a simple \emph{na\"ive baseline} (e.g., rule-based or heuristic).
-    \item Build an improved pipeline using existing pre-trained models.
-    \item Evaluate both approaches using appropriate metrics.
-    \item Reflect on what worked, what failed, and what you learned.
-\end{itemize}
-
-The emphasis is on the \emph{process} of AI work: problem definition, pipeline design, evaluation, iteration, and writing. Your problem should be small enough to run comfortably on a single GPU (e.g., RTX~3090) or CPU.
-
-\paragraph{Your tasks.} 
-Please replace all the sections to complete your report, starting from adding your project title, your name, and student ID above! Feel free to reorganize the sections. Then, submit a \textbf{public} github repository link that includes your code (including Jupyter notebook with results) and report \textbf{in PDF}, via LearnUs. 
-
-You can use tables and figures, and cite references using \verb|\citep| (\citep{wei2022finetuned}) or \verb|\citet| (\citet{wei2022finetuned}).
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Task Definition}
-\label{sec:definition}
-\begin{itemize}
-    \item \textbf{Task description:} The objective is to perform binary text classification on movie reviews. Specifically, the system classifies an input text into one of two sentiment categories: Positive or Negative.
-    \item \textbf{Motivation:} Automated sentiment analysis is highly useful for businesses to process large volumes of user feedback instantly, understanding audience reception at scale.
-    \item \textbf{Input / Output:} Input: A string of text containing a user's movie review.
-Output: A binary label: 1 (Positive) or 0 (Negative).
-    \item \textbf{Success criteria:} The primary success criterion is Accuracy (percentage of correct predictions) on the test dataset. A successful system is one that significantly outperforms both a random guess (50\%) and the simple naïve baseline.
-\end{itemize}
-
-\section{Methods}
-\label{sec:methods}
-
-This section includes both the na\"ive baseline and the improved AI pipeline.
+# CAS2105 Homework 6: Mini AI Pipeline Project
 
-\subsection{Na\"ive Baseline}
-\label{subsec:baseline}
-
-Implement a simple method that does not rely on heavy models. Examples include:
-\begin{itemize}
-    \item Keyword-based text classification,
-    \item Simple color/shape heuristics for image tasks,
-    \item String-overlap–based retrieval.
-\end{itemize}
-
-In your report, explain:
-\begin{itemize}
-    \item How the baseline works,
-    \item Why it is considered na\"ive,
-    \item Expected failure cases.
-\end{itemize}
-
-\subsubsection*{Your Baseline (Keyword Counting)}
-\begin{itemize}
-    \item \textbf{Method description:} I implemented a keyword counting heuristic algorithm. Two word lists were defined: a positive list (e.g., good, great, love, best) and a negative list (e.g., bad, terrible, boring, worst). I counted the frequency of these words in the original data. If the count of positive words count(positive-words) greater or equal the count of negative words count(negative-words), the prediction is positive; otherwise, it is negative.
-    \item \textbf{Why na\"ive:} This approach is considered naïve because it treats the text as a "bag of words" without understanding syntax or context. It completely ignores word order and grammar.
-    \item \textbf{Likely failure modes:} This program may produce incorrect results due to ambiguous expressions. (e.g., "not bad" is counted as negative due to the word "bad"). Failure may also occur if keywords cannot be identified.
-\end{itemize}
-
-
-\subsection{AI Pipeline}
-\label{subsec:pipeline}
-
-Design a small pipeline using one or more pre-trained models. Examples include:
-
-\begin{itemize}
-    \item \textbf{Text:} embedding encoder + classifier, or a small transformer model,
-    \item \textbf{Retrieval:} embedding model + nearest-neighbor search,
-    \item \textbf{Vision:} pre-trained classifier (e.g., ViT-tiny).
-\end{itemize}
+**Project Title:** Mini AI Pipeline: Movie Review Sentiment Analysis
+**Your Name:** [请在此处填写你的姓名]
+**Student ID:** [请在此处填写你的学号]
 
-A typical pipeline contains:
-\begin{enumerate}
-    \item Preprocessing,
-    \item Embedding or representation,
-    \item Decision/ranking component,
-    \item Optional post-processing.
-\end{enumerate}
+---
 
-Fine-tuning large models is not required; inference-only usage is sufficient.
+## 1. Introduction
 
-\subsubsection*{Your Pipeline (DistilBERT)}
-\begin{itemize}
-    \item \textbf{Models used:} I used the DistilBERT model, specifically the distilbert-base-uncased-finetuned-sst-2-english checkpoint from Hugging Face.
-    \item \textbf{Pipeline stages:} 1.Preprocessing: The input text is tokenized using the DistilBERT tokenizer (512 tokens). 2.Inference: The input is passed through the pre-trained Transformer model to obtain logits. 3.Decision: A softmax function is applied, and the label with the highest probability score is selected as the prediction.
-    \item \textbf{Design choices and justification:} I chose DistilBERT to my model, it is lightweight and fast, making it suitable for a mini-project on limited compute. I selected the sst-2 finetuned version because SST-2 is a sentiment analysis dataset similar to IMDB, allowing for high performance without training.
-\end{itemize}
+This project serves as a gentle introduction to designing simple AI pipelines, focusing on the core workflow: problem definition, pipeline design, evaluation, and reflection. The goal is to practice the process of AI work rather than achieving state-of-the-art results.
 
+I chose the task of **binary text classification** for movie reviews (*Sentiment Analysis*). The project is lightweight and designed to run quickly and comfortably on a standard CPU.
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Experiments}
-\label{sec:experiments}
+---
 
+## 2. Task Definition
 
-\subsection{Datasets}
-\label{sec:experiments:datasets}
+**Task description**
+The objective is to perform binary text classification, categorizing an input movie review into one of two sentiment categories: **Positive** or **Negative**.
 
-% --- TODO: Students fill this in ---
-% Describe your dataset clearly.
+**Motivation**
+Automated sentiment analysis is essential for quickly processing large volumes of user feedback, helping film studios and streaming services understand audience reception and trends.
 
-You may use a small public dataset (e.g., from \texttt{datasets}) or construct your own. 
-In this section, describe:
+**Input / Output**
 
-\begin{itemize}
-    \item \textbf{Dataset source}: where it comes from.
-    \item \textbf{Size}: number of examples used.
-    \item \textbf{Splits}: how you divided train/validation/test.
-    \item \textbf{Preprocessing}: e.g., tokenization, resizing, truncation, normalization.
-\end{itemize}
+* **Input:** A string of text (a movie review)
+* **Output:** A binary label: `1` (Positive) or `0` (Negative)
 
-\subsection*{Your Dataset Description (IMDB Dataset)}
-\begin{itemize}
-    \item \textbf{Source:} I used the IMDB dataset which is movie review dataset. Conclude Negative commend and positive commend, witch loaded via the Hugging Face datasets library. 
-    \item \textbf{Total examples:} I used a random subset of 200 examples to keep the pipeline lightweight.
-    \item \textbf{Train/Test split:} Since I used a pre-trained model , I treated all 200 examples from the official test split as my evaluation set to compare the baseline and the AI pipeline.
-    \item \textbf{Preprocessing steps:} 1.Baseline: Text was converted to lowercase to match the keyword lists. 2.AI Pipeline: Text was tokenized, truncated to a maximum length of 512 tokens, and padded to match the model's input requirements.
-\end{itemize}
+**Success criteria**
+The primary success criterion is **Accuracy**. A successful pipeline must demonstrate a significant and clear performance improvement over the naïve baseline.
 
+---
 
-\subsection{Metrics}
-\label{sec:experiments:metrics}
+## 3. Methods
 
-Use at least one quantitative metric appropriate for your task:
-\begin{itemize}
-    \item \textbf{Classification:} accuracy, precision, recall, F1,
-    \item \textbf{Retrieval:} precision@k, recall@k,
-    \item \textbf{Simple generation:} exact match, ROUGE-1.
-\end{itemize}
+### 3.1 Naïve Baseline
 
-\textcolor{gray}{It’s worth considering how the metrics you select align with your tasks.}
+**Method description**
+I implemented a simple **Keyword Counting heuristic**. The algorithm maintains two short lists of common positive and negative sentiment words. It counts the occurrences of words from both lists in a review. If the count of positive keywords is greater than or equal to the negative count, the prediction is **Positive (1)**; otherwise, it is **Negative (0)**.
 
-\subsection{Results}
-\label{sec:experiments:results}
+**Why naïve**
+This method treats text as a *bag of words*, completely ignoring grammatical structure, word order, and context (such as negation or sarcasm).
 
-Report:
-\begin{itemize}
-    \item Metric values for baseline vs.\ pipeline,
-    \item A results table,
-    \item At least three qualitative examples.
-\end{itemize}
+**Likely failure modes**
+Failure is highly likely in cases of explicit negation (e.g., *"not good"*) or when the review expresses sentiment implicitly without using predefined keywords.
 
+---
 
-\begin{center}
-\begin{tabular}{lcc}
-\toprule
-\textbf{Method} & \textbf{Metric 1}\\
-\toprule
-\midrule
-Baseline & 0.6050\\
-AI Pipeline & 0.7900\\
-\bottomrule
-\end{tabular}
-\end{center}
+### 3.2 AI Pipeline
 
-\begin{itemize}
-    \item Metric values: The AI pipeline significantly outperformed the baseline. The keyword baseline struggled with mixed sentiments, while the AI model effectively captured the overall tone.
-    \item Qualitative Examples:
+**Models used**
+I used the pre-trained **DistilBERT** model, specifically the `distilbert-base-uncased-finetuned-sst-2-english` checkpoint from the Hugging Face library.
 
-Success (Both): "I absolutely loved this movie, it was fantastic." (Data 176)
+**Pipeline stages**
 
-Both methods predicted Positive. The baseline found words like "loved" and "fantastic."
+1. **Preprocessing:** Input text is processed by the DistilBERT tokenizer, which converts raw text into numerical tokens and attention masks. Sequences longer than 512 tokens are truncated.
+2. **Inference:** The tokenized input is passed through the pre-trained DistilBERT Transformer model.
+3. **Decision:** Output logits are used to determine the final class by selecting the label (Positive or Negative) with the highest probability.
 
-Failure (Baseline only): "The plot was not bad at all."
+**Design choices and justification**
+DistilBERT was chosen because it is a lightweight and efficient distilled Transformer model. Using the SST-2 fine-tuned version provides strong performance on sentiment analysis tasks with minimal computational overhead, making it well-suited for a small-scale project focused on transfer learning.
 
-Baseline: Negative (detected "bad").
+---
 
-AI Pipeline: Positive (understood "not bad" context).
+## 4. Experiments and Results
 
-Failure (Both/Hard case): "It tries so hard to be clever that it ends up being exhausting." (Data 57)
+### 4.1 Dataset
 
-Baseline: Positive (found "clever").
+* **Source:** IMDB Large Movie Review Dataset (loaded via the Hugging Face `datasets` library)
+* **Total examples:** 200 randomly sampled examples from the public test split
+* **Train/Test split:** All 200 examples were used for evaluation, since the AI pipeline uses a pre-trained model without fine-tuning
 
-AI Pipeline: Positive (Incorrect, missed the nuance of "exhausting").
+**Preprocessing steps**
 
-True Label: Negative.
-\end{itemize}
+* **Baseline:** Text was lowercased
+* **AI pipeline:** All preprocessing (tokenization, truncation, padding) was handled by the model’s tokenizer
 
+---
 
-If you want to visualize results with any other than tables, refer to below links
-\begin{itemize}
-    \item \href{https://matplotlib.org/stable/tutorials/pyplot.html}{Matplotlib official tutorial: Introduction to \texttt{pyplot}}
-    \item \href{https://matplotlib.org/stable/gallery/index.html}{Matplotlib example gallery (many bar/line/scatter plots with source code)}
-    \item \href{https://www.kaggle.com/code/prashant111/matplotlib-tutorial-for-beginners}{Kaggle notebook: Matplotlib tutorial for beginners (interactive code)}
-\end{itemize}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Reflection and Limitations}
-\label{sec:reflection}
+### 4.2 Metrics
 
-Write approximately 6--10 sentences reflecting on:
-\begin{itemize}
-    \item What worked better than expected,
-    \item What failed or was difficult,
-    \item How well your metric captured ``quality'',
-    \item What you would try next with more time or compute.
-\end{itemize}
+I used **Accuracy** as the primary quantitative metric.
 
-\subsection*{Your Reflection (Success, failure, areas needing improvement)}
-% Students write freely here.
-The AI pipeline worked better than I expected, I was able to get over 75\% accuracy with just a few lines of code using the transformers library. The hardest part was choosing a fair starting point, i figure out that it couldn't be completely random, but it also had to stay simple enough to clearly show the performance difference. So i choose accuracy to measure this, since the dataset was balanced, but when i check the dataset, different about baseline and AI, as the person, I noticed that even the AI model struggles with subtle sarcasm. I think one of the problem was the small number of examples (I only choose 200 dataset), which could lead to high variation. So i think i can try a bit dataset next time, and get metric values for baseline and AI pipeline, If I had more time and computing resources, I would try making small changes to DistilBERT using the IMDB training set. This would help me see whether it could learn the specific style of movie reviews better than the generic SST-2 model.
+---
 
+### 4.3 Results
 
-\bibliography{references}
+The AI pipeline significantly outperformed the naïve baseline, demonstrating the value of deep learning models in capturing linguistic context.
 
-\end{document}
+| Method      | Accuracy | F1-Score (Optional) |
+| ----------- | -------- | ------------------- |
+| Baseline    | 0.605    | TODO                |
+| AI Pipeline | 0.790    | TODO                |
+
+**Qualitative Examples**
+
+**Success (AI Pipeline only)**
+
+* **Text:** *"This movie spends most of its time preaching that it is the script that makes the movie, but apparen..."*
+* **True Label:** Negative (0)
+* **Baseline Prediction:** Positive (1) — fails due to misleading keyword counts
+* **AI Prediction:** Negative (0) — correctly captures the overall negative tone
+
+**Failure (Baseline only)**
+
+* **Text:** *"The plot was not bad at all, I was quite entertained."*
+* **True Label:** Positive (1)
+* **Baseline Prediction:** Negative (0) — fails due to the keyword *"bad"*
+* **AI Prediction:** Positive (1) — correctly interprets the negation
+
+**Hard Case (AI Failure)**
+
+* **Text:** *"It tries so hard to be clever that it ends up being exhausting."*
+* **True Label:** Negative (0)
+* **Baseline Prediction:** Positive (1) — misled by *"clever"*
+* **AI Prediction:** Positive (1) — fails to capture the subtle negative implication
+
+---
+
+## 5. Reflection and Limitations
+
+The AI pipeline worked better than I expected, achieving over **75% accuracy** with only a few lines of code using the `transformers` library. The most difficult part was selecting a fair naïve baseline: it could not be completely random, but it also needed to remain simple enough to clearly highlight the performance gap.
+
+Accuracy was chosen as the evaluation metric because the dataset was balanced. However, by examining individual prediction differences between the baseline and the AI pipeline, I observed that even the AI model struggles with subtle sarcasm and implicit negativity.
+
+One limitation of this experiment is the small dataset size (only 200 examples), which may introduce high variance in the results. In future work, I would use a larger evaluation set and compute additional metrics such as F1-score for a more comprehensive comparison.
+
+With more time and computational resources, I would fine-tune DistilBERT on the IMDB training set. This could allow the model to better capture the specific linguistic style of movie reviews compared to the generic SST-2 sentiment dataset.
