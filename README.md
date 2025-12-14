@@ -128,10 +128,10 @@ The AI pipeline significantly outperformed the baseline. The keyword baseline st
 
 ## 5. Reflection and Limitations
 
-The AI pipeline worked better than I expected, achieving over 75% accuracy with only a few lines of code using the transformers library. The most difficult part was selecting a fair naïve baseline: it could not be completely random, but it also needed to remain simple enough to clearly highlight the performance gap.
+It worked much better than expected, with over 75% accuracy with only few lines of code from the transformers library. The most difficult part was choosing a naive baseline: it should be not completely random, but enough simple to capture the gap.
 
-Accuracy was chosen as the evaluation metric because the dataset was balanced. However, by examining individual prediction differences between the baseline and the AI pipeline, I observed that even the AI model struggles with subtle sarcasm and implicit negativity.
+I chose accuracy as the metric of evaluation because the dataset was balanced but examining each prediction difference between baseline and AI, I found that even the AI model is under serious sarcasm and implicit negativity.
 
-One limitation of this experiment is the small dataset size (only 200 examples), which may introduce high variance in the results. In future work, I would use a larger evaluation set and compute additional metrics such as F1-score for a more comprehensive comparison.
+One limitation of this experiment is that there is only 200 examples for which it may lead to high variance. In future work I will use larger evaluation set and compute other metrics such as another score.
 
 With more time and computational resources, I would fine-tune DistilBERT on the IMDB training set. This could allow the model to better capture the specific linguistic style of movie reviews compared to the generic SST-2 sentiment dataset.
