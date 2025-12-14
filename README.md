@@ -1,34 +1,34 @@
 # CAS2105 Homework 6: Mini AI Pipeline Project
 
 **Project Title:** Mini AI Pipeline: Movie Review Sentiment Analysis
-**Your Name:** [请在此处填写你的姓名]
-**Student ID:** [请在此处填写你的学号]
+**Your Name:** [PIAO YONGLIN]
+**Student ID:** [2021147515]
 
 ---
 
 ## 1. Introduction
 
-This project serves as a gentle introduction to designing simple AI pipelines, focusing on the core workflow: problem definition, pipeline design, evaluation, and reflection. The goal is to practice the process of AI work rather than achieving state-of-the-art results.
+This project serves as a gentle introduction to designing simple AI pipelines, focusing on the core workflow: problem definition, pipeline design, evaluation, and reflection. 
 
-I chose the task of **binary text classification** for movie reviews (*Sentiment Analysis*). The project is lightweight and designed to run quickly and comfortably on a standard CPU.
+I chose the task of **binary text classification** for movie reviews. The project is lightweight and designed to run quickly and comfortably on a standard CPU.
 
 ---
 
 ## 2. Task Definition
 
 **Task description**
-The objective is to perform binary text classification, categorizing an input movie review into one of two sentiment categories: **Positive** or **Negative**.
+The objective is to perform binary text classification on movie reviews. Specifically, the system classifies an input text into one of two sentiment categories: Positive or Negative.
 
 **Motivation**
-Automated sentiment analysis is essential for quickly processing large volumes of user feedback, helping film studios and streaming services understand audience reception and trends.
+Automated sentiment analysis is highly useful for businesses to process large volumes of user feedback instantly, understanding audience reception at scale.
 
 **Input / Output**
 
-* **Input:** A string of text (a movie review)
-* **Output:** A binary label: `1` (Positive) or `0` (Negative)
+* **Input:**  A string of text containing a user’s movie review
+* **Output:** A binary label: 1 (Positive) or 0 (Negative)
 
 **Success criteria**
-The primary success criterion is **Accuracy**. A successful pipeline must demonstrate a significant and clear performance improvement over the naïve baseline.
+The primary success criterion is Accuracy (percentage of correct predictions) on the test dataset. A successful system is one that significantly outperforms both a random guess (50%) and the simple na¨ıve baseline.
 
 ---
 
@@ -37,29 +37,30 @@ The primary success criterion is **Accuracy**. A successful pipeline must demons
 ### 3.1 Naïve Baseline
 
 **Method description**
-I implemented a simple **Keyword Counting heuristic**. The algorithm maintains two short lists of common positive and negative sentiment words. It counts the occurrences of words from both lists in a review. If the count of positive keywords is greater than or equal to the negative count, the prediction is **Positive (1)**; otherwise, it is **Negative (0)**.
+I implemented a keyword counting heuristic algorithm. Two word lists were defined: a positive list (e.g., good, great, love, best) and a negative list (e.g., bad, terrible, boring, worst). I counted the frequency of these words in the original data. If the count of positive words count(positive-words) greater or equal the count of negative words  count(negative-words), the prediction is positive; otherwise, it is negative.
 
 **Why naïve**
-This method treats text as a *bag of words*, completely ignoring grammatical structure, word order, and context (such as negation or sarcasm).
+This approach is considered na¨ıve because it treats the text as a ”bag of words” without understanding syntax or context. It completely ignores word order and grammar.
 
 **Likely failure modes**
-Failure is highly likely in cases of explicit negation (e.g., *"not good"*) or when the review expresses sentiment implicitly without using predefined keywords.
+This program may produce incorrect results due to ambiguous ex- pressions. (e.g., ”not bad” is counted as negative due to the word ”bad”). Failure may also occur if keywords cannot be identified.
 
 ---
 
 ### 3.2 AI Pipeline
 
 **Models used**
-I used the pre-trained **DistilBERT** model, specifically the `distilbert-base-uncased-finetuned-sst-2-english` checkpoint from the Hugging Face library.
+I used the DistilBERT model, specifically the distilbert-base-uncased-finetuned-sst-2-english checkpoint from Hugging Face.
 
 **Pipeline stages**
 
-1. **Preprocessing:** Input text is processed by the DistilBERT tokenizer, which converts raw text into numerical tokens and attention masks. Sequences longer than 512 tokens are truncated.
-2. **Inference:** The tokenized input is passed through the pre-trained DistilBERT Transformer model.
-3. **Decision:** Output logits are used to determine the final class by selecting the label (Positive or Negative) with the highest probability.
+1. **Preprocessing:** The input text is tokenized using the DistilBERT tokenizer (512 tokens).
+2. **Inference:** The input is passed through the pre-trained Transformer model to obtain logits.
+3. **Decision:** A softmax function is applied, and the label with the highest probability score is selected as the prediction.
 
 **Design choices and justification**
-DistilBERT was chosen because it is a lightweight and efficient distilled Transformer model. Using the SST-2 fine-tuned version provides strong performance on sentiment analysis tasks with minimal computational overhead, making it well-suited for a small-scale project focused on transfer learning.
+I chose DistilBERT to my model, it is lightweight and fast, making it suitable for a mini-project on limited compute. I selected the sst-2 finetuned version because SST-2 is a sentiment analysis dataset similar to IMDB, allowing for high
+performance without training.
 
 ---
 
@@ -67,14 +68,14 @@ DistilBERT was chosen because it is a lightweight and efficient distilled Transf
 
 ### 4.1 Dataset
 
-* **Source:** IMDB Large Movie Review Dataset (loaded via the Hugging Face `datasets` library)
-* **Total examples:** 200 randomly sampled examples from the public test split
-* **Train/Test split:** All 200 examples were used for evaluation, since the AI pipeline uses a pre-trained model without fine-tuning
+* **Source:** I used the IMDB dataset which is movie review dataset. Conclude Negative commend and positive commend, witch loaded via the Hugging Face datasets library.
+* **Total examples:** I used a random subset of 200 examples to keep the pipeline lightweight.
+* **Train/Test split:** Since I used a pre-trained model , I treated all 200 examples from the official test split as my evaluation set to compare the baseline and the AI pipeline.
 
 **Preprocessing steps**
 
-* **Baseline:** Text was lowercased
-* **AI pipeline:** All preprocessing (tokenization, truncation, padding) was handled by the model’s tokenizer
+* **Baseline:** Text was converted to lowercase to match the keyword lists.
+* **AI pipeline:** Text was tokenized, truncated to a maximum length of 512 tokens, and padded to match the model’s input requirements.
 
 ---
 
@@ -86,35 +87,36 @@ I used **Accuracy** as the primary quantitative metric.
 
 ### 4.3 Results
 
-The AI pipeline significantly outperformed the naïve baseline, demonstrating the value of deep learning models in capturing linguistic context.
+The AI pipeline significantly outperformed the baseline. The keyword baseline struggled with mixed sentiments, while the AI model effectively captured the overall tone.
 
-| Method      | Accuracy | F1-Score (Optional) |
-| ----------- | -------- | ------------------- |
-| Baseline    | 0.605    | TODO                |
-| AI Pipeline | 0.790    | TODO                |
+| Method      | Accuracy |
+| ----------- | -------- |
+| Baseline    | 0.605    |
+| AI Pipeline | 0.790    |
 
 **Qualitative Examples**
 
-**Success (AI Pipeline only)**
+**Success (Both)**
 
-* **Text:** *"This movie spends most of its time preaching that it is the script that makes the movie, but apparen..."*
-* **True Label:** Negative (0)
-* **Baseline Prediction:** Positive (1) — fails due to misleading keyword counts
-* **AI Prediction:** Negative (0) — correctly captures the overall negative tone
-
-**Failure (Baseline only)**
-
-* **Text:** *"The plot was not bad at all, I was quite entertained."*
+* **Text:** *"I absolutely loved this movie, it was fantastic..."* (Data 176)
 * **True Label:** Positive (1)
-* **Baseline Prediction:** Negative (0) — fails due to the keyword *"bad"*
-* **AI Prediction:** Positive (1) — correctly interprets the negation
+* **Baseline Prediction:** Positive (1)
+* **AI Prediction:** Positive (1)
+* **Both methods predicted Positive. The baseline found words like ”loved” and ”fantastic.”
+
+**Failure (AI only)**
+
+* **Text:** *"The plot was not bad at all..."* (Data 79)
+* **True Label:** Positive (1)
+* **Baseline Prediction:** Negative (0) — fails due to the keyword "bad"
+* **AI Prediction:** Positive (1) — understood ”not bad” context
 
 **Hard Case (AI Failure)**
 
-* **Text:** *"It tries so hard to be clever that it ends up being exhausting."*
+* **Text:** *"It tries so hard to be clever that it ends up being exhausting..."* (Data 112)
 * **True Label:** Negative (0)
-* **Baseline Prediction:** Positive (1) — misled by *"clever"*
-* **AI Prediction:** Positive (1) — fails to capture the subtle negative implication
+* **Baseline Prediction:** Positive (1) — found "clever"
+* **AI Prediction:** Positive (1) — missed the nuance of ”exhausting”
 
 ---
 
