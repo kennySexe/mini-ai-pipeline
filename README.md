@@ -128,7 +128,7 @@ The AI pipeline significantly outperformed the baseline. The keyword baseline st
 
 ## 5. Reflection and Limitations
 
-The AI pipeline worked better than I expected, achieving over **75% accuracy** with only a few lines of code using the `transformers` library. The most difficult part was selecting a fair naïve baseline: it could not be completely random, but it also needed to remain simple enough to clearly highlight the performance gap.
+The AI pipeline worked better than I expected, achieving over 75% accuracy with only a few lines of code using the transformers library. The most difficult part was selecting a fair naïve baseline: it could not be completely random, but it also needed to remain simple enough to clearly highlight the performance gap.
 
 Accuracy was chosen as the evaluation metric because the dataset was balanced. However, by examining individual prediction differences between the baseline and the AI pipeline, I observed that even the AI model struggles with subtle sarcasm and implicit negativity.
 
